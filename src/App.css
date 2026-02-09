@@ -103,6 +103,18 @@
   margin-left: 4px;
 }
 
+/* Error Message */
+.error-message {
+  color: #e03131;
+  font-size: 0.85rem;
+  margin-bottom: 0.8rem;
+  text-align: left;
+  background: #fff0f0;
+  padding: 0.6rem 0.8rem;
+  border-radius: 8px;
+  border: 1px solid #ffc9c9;
+}
+
 /* Submit Button */
 .submit-btn {
   width: 100%;
@@ -133,7 +145,37 @@
   cursor: not-allowed;
 }
 
+/* Loading */
+.loading-content {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+}
+
+.spinner {
+  display: inline-block;
+  width: 18px;
+  height: 18px;
+  border: 3px solid rgba(255, 255, 255, 0.3);
+  border-top-color: #fff;
+  border-radius: 50%;
+  animation: spin 0.8s linear infinite;
+}
+
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
 /* Result Card */
+.result-header {
+  margin-bottom: 1.2rem;
+  padding-bottom: 1rem;
+  border-bottom: 1px solid #eee;
+}
+
 .result-title {
   font-size: 1.4rem;
   font-weight: 700;
@@ -144,72 +186,97 @@
 .result-date {
   color: #888;
   font-size: 0.95rem;
+}
+
+/* Fortune Content — Markdown Styling */
+.fortune-content {
+  text-align: left;
   margin-bottom: 1.5rem;
 }
 
-/* Lotto Balls */
-.balls-container {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  gap: 0.4rem;
-  margin-bottom: 1.2rem;
-  flex-wrap: wrap;
-}
-
-.ball {
-  width: 48px;
-  height: 48px;
-  border-radius: 50%;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-size: 1.1rem;
-  font-weight: 800;
-  color: #fff;
-  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.2);
-  box-shadow: inset 0 -3px 6px rgba(0, 0, 0, 0.15), 0 2px 8px rgba(0, 0, 0, 0.1);
-}
-
-.ball-yellow {
-  background: linear-gradient(145deg, #ffd43b, #f59f00);
-}
-
-.ball-blue {
-  background: linear-gradient(145deg, #74c0fc, #1c7ed6);
-}
-
-.ball-red {
-  background: linear-gradient(145deg, #ff8787, #e03131);
-}
-
-.ball-gray {
-  background: linear-gradient(145deg, #adb5bd, #868e96);
-}
-
-.ball-green {
-  background: linear-gradient(145deg, #69db7c, #2f9e44);
-}
-
-.bonus {
-  border: 2px dashed #aaa;
-}
-
-.plus {
-  font-size: 1.3rem;
+.fortune-content h2 {
+  font-size: 1.15rem;
   font-weight: 700;
-  color: #aaa;
-  margin: 0 0.2rem;
+  color: #333;
+  margin-top: 1.5rem;
+  margin-bottom: 0.6rem;
+  padding-bottom: 0.4rem;
+  border-bottom: 2px solid #667eea30;
 }
 
-.result-info {
-  color: #666;
-  font-size: 0.9rem;
-  margin-bottom: 1.5rem;
-}
-
-.result-info strong {
+.fortune-content h3 {
+  font-size: 1rem;
+  font-weight: 700;
   color: #764ba2;
+  margin-top: 1.2rem;
+  margin-bottom: 0.4rem;
+}
+
+.fortune-content h4 {
+  font-size: 0.92rem;
+  font-weight: 600;
+  color: #555;
+  margin-top: 0.8rem;
+  margin-bottom: 0.3rem;
+}
+
+.fortune-content p {
+  font-size: 0.9rem;
+  line-height: 1.75;
+  color: #444;
+  margin-bottom: 0.6rem;
+  word-break: keep-all;
+}
+
+.fortune-content strong {
+  color: #333;
+  font-weight: 700;
+}
+
+.fortune-content ul,
+.fortune-content ol {
+  margin: 0.4rem 0 0.8rem 0;
+  padding-left: 1.2rem;
+}
+
+.fortune-content li {
+  font-size: 0.88rem;
+  line-height: 1.7;
+  color: #444;
+  margin-bottom: 0.3rem;
+}
+
+.fortune-content li strong {
+  color: #764ba2;
+}
+
+.fortune-content hr {
+  border: none;
+  height: 1px;
+  background: linear-gradient(90deg, transparent, #ddd, transparent);
+  margin: 1.2rem 0;
+}
+
+.fortune-content blockquote {
+  border-left: 3px solid #667eea;
+  background: #f8f7ff;
+  padding: 0.6rem 0.8rem;
+  margin: 0.6rem 0;
+  border-radius: 0 8px 8px 0;
+}
+
+.fortune-content blockquote p {
+  color: #555;
+  font-size: 0.88rem;
+}
+
+.fortune-content code {
+  background: #f0edff;
+  color: #764ba2;
+  padding: 0.1rem 0.35rem;
+  border-radius: 4px;
+  font-size: 0.85rem;
+  font-family: inherit;
 }
 
 /* Retry Button */
@@ -247,11 +314,5 @@
   .form-card,
   .result-card {
     padding: 1.5rem 1rem;
-  }
-
-  .ball {
-    width: 40px;
-    height: 40px;
-    font-size: 0.95rem;
   }
 }

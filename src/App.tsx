@@ -1,4 +1,5 @@
 import { useState } from 'react'
+import Markdown from 'react-markdown'
 import './App.css'
 
 function App() {
@@ -7,36 +8,43 @@ function App() {
   const [day, setDay] = useState('')
   const [hour, setHour] = useState('')
   const [minute, setMinute] = useState('')
-  const [numbers, setNumbers] = useState<number[]>([])
-  const [bonusNumber, setBonusNumber] = useState<number | null>(null)
+  const [content, setContent] = useState('')
+  const [loading, setLoading] = useState(false)
+  const [error, setError] = useState('')
   const [showResult, setShowResult] = useState(false)
 
-  const generateLottoNumbers = () => {
+  const fetchFortune = async () => {
     if (!year || !month || !day) return
 
-    const seed =
-      parseInt(year) * 10000 +
-      parseInt(month) * 100 +
-      parseInt(day) +
-      (hour ? parseInt(hour) * 60 : 0) +
-      (minute ? parseInt(minute) : 0)
+    setLoading(true)
+    setError('')
 
-    const generated = new Set<number>()
-    let current = seed
+    try {
+      const response = await fetch('/api/fortune', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          year,
+          month,
+          day,
+          ...(hour && { hour }),
+          ...(minute && { minute }),
+        }),
+      })
 
-    while (generated.size < 7) {
-      current = ((current * 9301 + 49297) % 233280)
-      const num = (current % 45) + 1
-      generated.add(num)
+      if (!response.ok) {
+        const errData = await response.json().catch(() => null)
+        throw new Error(errData?.error || '서버 오류가 발생했습니다.')
+      }
+
+      const data = await response.json()
+      setContent(data.content)
+      setShowResult(true)
+    } catch (err) {
+      setError(err instanceof Error ? err.message : '알 수 없는 오류가 발생했습니다.')
+    } finally {
+      setLoading(false)
     }
-
-    const arr = Array.from(generated)
-    const main = arr.slice(0, 6).sort((a, b) => a - b)
-    const bonus = arr[6]
-
-    setNumbers(main)
-    setBonusNumber(bonus)
-    setShowResult(true)
   }
 
   const reset = () => {
@@ -45,24 +53,16 @@ function App() {
     setDay('')
     setHour('')
     setMinute('')
-    setNumbers([])
-    setBonusNumber(null)
+    setContent('')
+    setError('')
     setShowResult(false)
-  }
-
-  const getBallColor = (num: number) => {
-    if (num <= 10) return 'ball-yellow'
-    if (num <= 20) return 'ball-blue'
-    if (num <= 30) return 'ball-red'
-    if (num <= 40) return 'ball-gray'
-    return 'ball-green'
   }
 
   return (
     <div className="app">
       <header className="header">
         <h1 className="title">Lucky By Birthday</h1>
-        <p className="subtitle">생년월일로 나만의 행운 번호를 찾아보세요</p>
+        <p className="subtitle">AI 사주풀이로 나만의 행운 번호를 찾아보세요</p>
       </header>
 
       <main className="main">
@@ -82,6 +82,7 @@ function App() {
                     min="1900"
                     max="2026"
                     className="input"
+                    disabled={loading}
                   />
                   <span className="input-suffix">년</span>
                 </div>
@@ -94,6 +95,7 @@ function App() {
                     min="1"
                     max="12"
                     className="input"
+                    disabled={loading}
                   />
                   <span className="input-suffix">월</span>
                 </div>
@@ -106,6 +108,7 @@ function App() {
                     min="1"
                     max="31"
                     className="input"
+                    disabled={loading}
                   />
                   <span className="input-suffix">일</span>
                 </div>
@@ -124,6 +127,7 @@ function App() {
                     min="0"
                     max="23"
                     className="input"
+                    disabled={loading}
                   />
                   <span className="input-suffix">시</span>
                 </div>
@@ -136,42 +140,42 @@ function App() {
                     min="0"
                     max="59"
                     className="input"
+                    disabled={loading}
                   />
                   <span className="input-suffix">분</span>
                 </div>
               </div>
             </div>
 
+            {error && <p className="error-message">{error}</p>}
+
             <button
               className="submit-btn"
-              onClick={generateLottoNumbers}
-              disabled={!year || !month || !day}
+              onClick={fetchFortune}
+              disabled={!year || !month || !day || loading}
             >
-              행운 번호 받기
+              {loading ? (
+                <span className="loading-content">
+                  <span className="spinner" />
+                  사주 분석 중...
+                </span>
+              ) : (
+                '사주풀이 & 행운 번호 받기'
+              )}
             </button>
           </div>
         ) : (
           <div className="result-card">
-            <h2 className="result-title">당신의 행운 번호</h2>
-            <p className="result-date">
-              {year}년 {month}월 {day}일
-              {hour && minute ? ` ${hour}시 ${minute}분` : hour ? ` ${hour}시` : ''} 생
-            </p>
-
-            <div className="balls-container">
-              {numbers.map((num, i) => (
-                <div key={i} className={`ball ${getBallColor(num)}`}>
-                  {num}
-                </div>
-              ))}
-              <span className="plus">+</span>
-              <div className={`ball bonus ${getBallColor(bonusNumber!)}`}>
-                {bonusNumber}
-              </div>
+            <div className="result-header">
+              <h2 className="result-title">사주풀이 결과</h2>
+              <p className="result-date">
+                {year}년 {month}월 {day}일
+                {hour && minute ? ` ${hour}시 ${minute}분` : hour ? ` ${hour}시` : ''} 생
+              </p>
             </div>
 
-            <div className="result-info">
-              <p>보너스 번호: <strong>{bonusNumber}</strong></p>
+            <div className="fortune-content">
+              <Markdown>{content}</Markdown>
             </div>
 
             <button className="retry-btn" onClick={reset}>
